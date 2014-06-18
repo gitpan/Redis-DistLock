@@ -3,7 +3,7 @@ package My::Redis;
 use strict;
 use warnings;
 
-use Digest::SHA1 qw( sha1_hex );
+use Digest::SHA qw( sha1_hex );
 
 sub info {
     return { redis_version => $_[0]{version} };

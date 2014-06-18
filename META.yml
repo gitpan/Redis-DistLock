@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Redis-DistLock
-version:            0.06
+version:            0.07
 abstract:           Distributed lock manager using Redis
 author:
     - Simon Bertrang <janus@cpan.org>, Ryan Bastic <ryan@bastic.net>
