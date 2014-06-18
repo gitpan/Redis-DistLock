@@ -72,6 +72,13 @@ string based on 24 random input bytes.
 
 Same as lock() but with a known value instead of a random string.
 
+## lock( $resource, $ttl, $value, $extend )
+
+Same as lock(), but given `$extend` is true it extends an existing
+lock or creates a new one instead of having to unlock first.
+
+**NOTE**: This option is EXPERIMENTAL and might change without warning!
+
 ## release( $lock )
 
 Release the previously acquired lock.
@@ -100,12 +107,12 @@ would like to express their gratitude.
 
 # AUTHORS
 
-- Simon Bertrang, <janus@cpan.org>
-- Ryan Bastic, <ryan@bastic.net>
+- Simon Bertrang <janus@cpan.org>
+- Ryan Bastic <ryan@bastic.net>
 
 # COPYRIGHT AND LICENSE
 
-Copyright (C) 2014 by Simon Bertrang
+Copyright (C) 2014 by Simon Bertrang, Ryan Bastic
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

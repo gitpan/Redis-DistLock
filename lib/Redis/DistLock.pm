@@ -3,7 +3,7 @@ package Redis::DistLock;
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Digest::SHA qw( sha1_hex );
 use MIME::Base64 qw( encode_base64 );
@@ -22,6 +22,14 @@ else
 end
 ' }
 sub RELEASE_SHA1()      { sha1_hex( RELEASE_SCRIPT ) }
+sub EXTEND_SCRIPT()     { '
+if redis.call( "set", KEYS[1], ARGV[1], "XX", "PX", ARGV[2] ) then
+    return "OK"
+else
+    return redis.call( "set", KEYS[1], ARGV[1], "NX", "PX", ARGV[2] )
+end
+' }
+sub EXTEND_SHA1()       { sha1_hex( EXTEND_SCRIPT ) }
 
 sub DESTROY {
     my $self = shift;
@@ -87,6 +95,12 @@ sub new {
         if ( $sha1 ne RELEASE_SHA1 ) {
             die( "FATAL: script load results in different checksum!" );
         }
+
+        $sha1 = $redis->script_load( EXTEND_SCRIPT );
+
+        if ( $sha1 ne EXTEND_SHA1 ) {
+            die( "FATAL: failed to load extend script: sha1 mismatch!" );
+        }
     }
 
     if ( @servers < $quorum ) {
@@ -111,7 +125,7 @@ sub _get_random_id {
 }
 
 sub lock {
-    my ( $self, $resource, $ttl, $value ) = @_;
+    my ( $self, $resource, $ttl, $value, $extend ) = @_;
     my $retry_count = $self->{retry_count};
 
     $value = _get_random_id()
@@ -124,7 +138,9 @@ sub lock {
         for my $redis ( @{ $self->{servers} } ) {
             # count successful locks, response only needs to be true
             $ok += eval {
-                $redis->set( $resource, $value, "NX", "PX", $ttl * 1000 )
+                ! $extend
+                ? $redis->set( $resource, $value, "NX", "PX", $ttl * 1000 )
+                : $redis->evalsha( EXTEND_SHA1, 1, $resource, $value, $ttl * 1000 )
             } ? 1 : 0;
 
             $self->{logger}->( $@ )
@@ -251,6 +267,13 @@ string based on 24 random input bytes.
 
 Same as lock() but with a known value instead of a random string.
 
+=head2 lock( $resource, $ttl, $value, $extend )
+
+Same as lock(), but given C<$extend> is true it extends an existing
+lock or creates a new one instead of having to unlock first.
+
+B<NOTE>: This option is EXPERIMENTAL and might change without warning!
+
 =head2 release( $lock )
 
 Release the previously acquired lock.
@@ -292,17 +315,17 @@ would like to express their gratitude.
 
 =item *
 
-Simon Bertrang, E<lt>janus@cpan.orgE<gt>
+Simon Bertrang E<lt>janus@cpan.orgE<gt>
 
 =item *
 
-Ryan Bastic, E<lt>ryan@bastic.netE<gt>
+Ryan Bastic E<lt>ryan@bastic.netE<gt>
 
 =back
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014 by Simon Bertrang
+Copyright (C) 2014 by Simon Bertrang, Ryan Bastic
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

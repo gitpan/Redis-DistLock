@@ -1,30 +1,29 @@
----
-abstract: 'Distributed lock manager using Redis'
+--- #YAML:1.0
+name:               Redis-DistLock
+version:            0.06
+abstract:           Distributed lock manager using Redis
 author:
-  - 'Simon Bertrang <janus@cpan.org>'
-  - 'Ryan Bastic <ryan@bastic.net>'
-build_requires:
-  ExtUtils::MakeMaker: 0
+    - Simon Bertrang <janus@cpan.org>, Ryan Bastic <ryan@bastic.net>
+license:            perl
+distribution_type:  module
 configure_requires:
-  ExtUtils::MakeMaker: 0
-dynamic_config: 1
-generated_by: 'ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.120921'
-license: perl
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.4.html
-  version: 1.4
-name: Redis-DistLock
-no_index:
-  directory:
-    - t
-    - inc
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
 requires:
-  Digest::SHA: 0
-  MIME::Base64: 0
-  Redis: 0
-  Time::HiRes: 0
+    Digest::SHA:   0
+    MIME::Base64:  0
+    Redis:         0
+    Time::HiRes:   0
 resources:
-  bugtracker: https://github.com/sbertrang/redis-distlock/issues
-  license: http://dev.perl.org/licenses/
-  repository: https://github.com/sbertrang/redis-distlock
-version: 0.05
+    bugtracker:  https://github.com/sbertrang/redis-distlock/issues
+    license:     http://dev.perl.org/licenses/
+    repository:  https://github.com/sbertrang/redis-distlock
+no_index:
+    directory:
+        - t
+        - inc
+generated_by:       ExtUtils::MakeMaker version 6.56
+meta-spec:
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4

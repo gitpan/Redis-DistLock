@@ -11,5 +11,6 @@ t/004_release.t
 t/005_version.t
 t/006_quorum.t
 t/007_logger.t
-META.yml                                 Module YAML meta-data (added by MakeMaker)
-META.json                                Module JSON meta-data (added by MakeMaker)
+t/008_extend.t
+t/lib/My/Redis.pm
+META.yml                                 Module meta-data (added by MakeMaker)
